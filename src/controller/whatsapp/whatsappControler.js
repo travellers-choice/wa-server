@@ -6,10 +6,10 @@ const qrcode = require("qrcode");
 const store = new MongoStore({ mongoose: mongoose });
 
 let client = new Client({
-    // authStrategy: new RemoteAuth({
-    //     store: store,
-    //     backupSyncIntervalMs: 300000,
-    // }),
+    authStrategy: new RemoteAuth({
+        store: store,
+        backupSyncIntervalMs: 300000,
+    }),
     authStrategy: new LocalAuth({
         dataPath: "whatsappDb",
     }),
@@ -22,25 +22,31 @@ let urlString = null;
 
 const connectWhatsApp = async () => {
     try {
-        client.on("qr", (qr) => {
-            try {
-                qrcode.toDataURL(qr, (err, url) => {
-                    if (err) {
-                        console.error("Error generating QR code:", err);
+        mongoose
+            .connect(
+                "mongodb+srv://Tctt_BookingEngine_TestUser:sPny3hwDu9sFikg3@tcttbookingengine-test.c3jxpfz.mongodb.net/TcttBookingEngineTest"
+            )
+            .then(() => {
+                client.on("qr", (qr) => {
+                    try {
+                        qrcode.toDataURL(qr, (err, url) => {
+                            if (err) {
+                                console.error("Error generating QR code:", err);
+                                // reject(err);
+                            } else {
+                                urlString = url;
+                                console.log(url);
+                                // resolve(url);
+                            }
+                        });
+                    } catch (err) {
                         // reject(err);
-                    } else {
-                        urlString = url;
-                        console.log(url);
-                        // resolve(url);
+                        throw err;
                     }
                 });
-            } catch (err) {
-                // reject(err);
-                throw err;
-            }
-        });
-        console.log("whatsapp connect");
-        client.initialize();
+                console.log("whatsapp connect");
+                client.initialize();
+            });
     } catch (err) {
         console.log(err);
     }
