@@ -22,23 +22,6 @@ let urlString = null;
 
 const connectWhatsApp = async () => {
     try {
-        client.on("qr", (qr) => {
-            try {
-                qrcode.toDataURL(qr, (err, url) => {
-                    if (err) {
-                        console.error("Error generating QR code:", err);
-                        // reject(err);
-                    } else {
-                        urlString = url;
-                        console.log(url);
-                        // resolve(url);
-                    }
-                });
-            } catch (err) {
-                // reject(err);
-                // throw err;
-            }
-        });
         console.log("whatsapp connect");
         client.initialize();
     } catch (err) {
@@ -51,9 +34,25 @@ const getQrCodeHelper = async (req, res) => {
         const state = await client.getState();
         console.log(state, "state");
         if (state !== "CONNECTED") {
-            // new Promise((resolve, reject) => {
-
-            // });
+            new Promise((resolve, reject) => {
+                client.on("qr", (qr) => {
+                    try {
+                        qrcode.toDataURL(qr, (err, url) => {
+                            if (err) {
+                                console.error("Error generating QR code:", err);
+                                // reject(err);
+                            } else {
+                                urlString = url;
+                                console.log(url);
+                                resolve(url);
+                            }
+                        });
+                    } catch (err) {
+                        reject(err);
+                        // throw err;
+                    }
+                });
+            });
 
             res.status(200).json(urlString);
         } else {
@@ -135,7 +134,7 @@ const sendMessageHelper = async (req, res) => {
 
         const state = await client?.getState();
 
-        console.log(state, "state check helper");
+        console.log(state, "state message helper");
         if (state === "CONNECTED") {
             if (type === "path") {
                 const filePath = path.join(
@@ -162,6 +161,8 @@ const sendMessageHelper = async (req, res) => {
             }
             res.status(200).json(true);
         } else {
+            console.log(state, "state message helper false");
+
             res.status(200).json(false);
         }
     } catch (err) {
