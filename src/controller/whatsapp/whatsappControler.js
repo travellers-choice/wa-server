@@ -6,13 +6,13 @@ const qrcode = require("qrcode");
 const store = new MongoStore({ mongoose: mongoose });
 
 let client = new Client({
-    authStrategy: new RemoteAuth({
-        store: store,
-        backupSyncIntervalMs: 300000,
-    }),
-    // authStrategy: new LocalAuth({
-    //     dataPath: "whatsappDb",
+    // authStrategy: new RemoteAuth({
+    //     store: store,
+    //     backupSyncIntervalMs: 300000,
     // }),
+    authStrategy: new LocalAuth({
+        dataPath: "whatsappDb",
+    }),
     puppeteer: {
         args: ["--no-sandbox"],
     },
@@ -23,14 +23,14 @@ const state = false;
 
 const connectWhatsApp = async () => {
     try {
-        mongoose
-            .connect(
-                "mongodb+srv://Tctt_BookingEngine_TestUser:sPny3hwDu9sFikg3@tcttbookingengine-test.c3jxpfz.mongodb.net/TcttBookingEngineTest"
-            )
-            .then(() => {
-                console.log("whatsapp connect");
-                client.initialize();
-            });
+        // mongoose
+        //     .connect(
+        //         "mongodb+srv://Tctt_BookingEngine_TestUser:sPny3hwDu9sFikg3@tcttbookingengine-test.c3jxpfz.mongodb.net/TcttBookingEngineTest"
+        //     )
+        //     .then(() => {
+        console.log("whatsapp connect");
+        client.initialize();
+        // });
     } catch (err) {
         console.log(err);
     }
