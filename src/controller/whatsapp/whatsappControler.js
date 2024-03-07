@@ -149,9 +149,8 @@ const sendMessageHelper = async (req, res) => {
         console.log("call reached messsage check");
         const { type, url, path, message, number } = req.body;
 
-        // const state = await client?.getState();
+        const state = await client?.getState();
 
-        console.log(state, "state message helper");
         if (state === "CONNECTED") {
             if (type === "path") {
                 const filePath = path.join(
