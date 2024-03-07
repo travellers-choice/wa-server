@@ -132,31 +132,38 @@ const stateHelper = async (req, res) => {
 const sendMessageHelper = async (req, res) => {
     try {
         const { type, url, path, message, number } = req.body;
-        if (type === "path") {
-            const filePath = path.join(
-                __dirname,
-                "../../public/pdf",
-                "quotation1691768192294-352642073.pdf"
-            );
 
-            const media = MessageMedia.fromFilePath(filePath);
+        const state = await client?.getState();
 
-            // Send the message with the PDF attachment
-            await client.sendMessage(`${number}@c.us`, media);
-        } else if (type === "url") {
-            const url =
-                // "https://api.travellerschoice.ae/api/v1/b2b/attractions/orders/65e72dd9bb3a328b978254dc/ticket/65e72dd9bb3a328b978254dd";
-                "https://via.placeholder.com/350x150.png";
-            const media = MessageMedia.fromUrl(url);
-            await client.sendMessage(`${number}@c.us`, media);
-        } else if (type === "message") {
-            await client.sendMessage(
-                `${number.replace(/\+/g, "")}@c.us`,
-                message
-            );
+        console.log(state, "state check helper");
+        if (state === "CONNECTED") {
+            if (type === "path") {
+                const filePath = path.join(
+                    __dirname,
+                    "../../public/pdf",
+                    "quotation1691768192294-352642073.pdf"
+                );
+
+                const media = MessageMedia.fromFilePath(filePath);
+
+                // Send the message with the PDF attachment
+                await client.sendMessage(`${number}@c.us`, media);
+            } else if (type === "url") {
+                const url =
+                    // "https://api.travellerschoice.ae/api/v1/b2b/attractions/orders/65e72dd9bb3a328b978254dc/ticket/65e72dd9bb3a328b978254dd";
+                    "https://via.placeholder.com/350x150.png";
+                const media = MessageMedia.fromUrl(url);
+                await client.sendMessage(`${number}@c.us`, media);
+            } else if (type === "message") {
+                await client.sendMessage(
+                    `${number.replace(/\+/g, "")}@c.us`,
+                    message
+                );
+            }
+            res.status(200).json(true);
+        } else {
+            res.status(200).json(false);
         }
-
-        res.status(200).json(true);
     } catch (err) {
         console.log(err);
     }
