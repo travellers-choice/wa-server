@@ -20,11 +20,10 @@ let client = new Client({
 
 let urlString = null;
 
-const connectWhatsApp = async (req, res) => {
+const connectWhatsApp = async () => {
     try {
+        console.log("whatsapp connect");
         client.initialize();
-
-        res.status(200).json("whatsapp db connected");
     } catch (err) {
         console.log(err);
     }
@@ -49,8 +48,8 @@ const getQrCodeHelper = async (req, res) => {
                             }
                         });
                     } catch (err) {
-                        throw err;
                         reject(err);
+                        // throw err;
                     }
                 });
             });

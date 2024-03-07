@@ -1,5 +1,6 @@
 // Importing required modules
 const express = require("express");
+const { connectWhatsApp } = require("./controller/whatsapp/whatsappControler");
 
 // Creating an instance of Express
 const app = express();
@@ -9,6 +10,8 @@ const { whatsappRouter } = require("./router");
 app.get("/", (req, res) => {
     res.send("Hello, World!");
 });
+
+connectWhatsApp();
 
 app.use("/whatsapp", whatsappRouter);
 
