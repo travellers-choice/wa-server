@@ -34,6 +34,7 @@ const getQrCodeHelper = async (req, res) => {
         const state = await client.getState();
         console.log(state, "state");
         if (state !== "CONNECTED") {
+            client.initialize();
             new Promise((resolve, reject) => {
                 client.on("qr", (qr) => {
                     try {
