@@ -19,6 +19,7 @@ let client = new Client({
 });
 
 let urlString = null;
+const state = false;
 
 const connectWhatsApp = async () => {
     try {
@@ -27,23 +28,6 @@ const connectWhatsApp = async () => {
                 "mongodb+srv://Tctt_BookingEngine_TestUser:sPny3hwDu9sFikg3@tcttbookingengine-test.c3jxpfz.mongodb.net/TcttBookingEngineTest"
             )
             .then(() => {
-                client.on("qr", (qr) => {
-                    try {
-                        qrcode.toDataURL(qr, (err, url) => {
-                            if (err) {
-                                console.error("Error generating QR code:", err);
-                                // reject(err);
-                            } else {
-                                urlString = url;
-                                console.log(url);
-                                // resolve(url);
-                            }
-                        });
-                    } catch (err) {
-                        // reject(err);
-                        throw err;
-                    }
-                });
                 console.log("whatsapp connect");
                 client.initialize();
             });
@@ -58,11 +42,33 @@ const getQrCodeHelper = async (req, res) => {
         console.log(state, "state");
         if (state !== "CONNECTED") {
             // client.initialize();
-            // new Promise((resolve, reject) => {
-
-            // });
-
-            res.status(200).json(urlString);
+            let result = new Promise((resolve, reject) => {
+                client.on("qr", (qr) => {
+                    try {
+                        qrcode.toDataURL(qr, (err, url) => {
+                            if (err) {
+                                console.error("Error generating QR code:", err);
+                                // reject(err);
+                            } else {
+                                urlString = url;
+                                console.log(url);
+                                resolve(url);
+                            }
+                        });
+                    } catch (err) {
+                        reject(err);
+                        // throw err;
+                    }
+                });
+            });
+            result
+                .then((url) => {
+                    res.status(200).json(url);
+                })
+                .catch((err) => {
+                    console.error("Error occurred:", err);
+                    res.status(500).json({ error: "Internal Server Error" });
+                });
         } else {
             throw new Error("Please logout before changing number"); // Throw a new Error object
         }
@@ -76,6 +82,7 @@ const getReadyCheckHelper = async (req, res) => {
         const state = await client.getState();
         console.log(state, "state");
         if (state === "CONNECTED") {
+            // state = "CONNECTED";
             res.status(200).json(true);
         } else {
             res.status(200).json(false);
@@ -123,6 +130,7 @@ const logoutHelper = async (req, res) => {
 
 const stateHelper = async (req, res) => {
     try {
+        console.log("call reached state check");
         const state = await client?.getState();
 
         console.log(state, "state check helper");
@@ -140,7 +148,7 @@ const sendMessageHelper = async (req, res) => {
     try {
         const { type, url, path, message, number } = req.body;
 
-        const state = await client?.getState();
+        // const state = await client?.getState();
 
         console.log(state, "state message helper");
         if (state === "CONNECTED") {
