@@ -22,23 +22,6 @@ let urlString = null;
 
 const connectWhatsApp = async (req, res) => {
     try {
-        client.on("qr", (qr) => {
-            try {
-                qrcode.toDataURL(qr, (err, url) => {
-                    if (err) {
-                        console.error("Error generating QR code:", err);
-                        // reject(err);
-                    } else {
-                        urlString = url;
-                        console.log(url);
-                        // resolve(url);
-                    }
-                });
-            } catch (err) {
-                throw err;
-                // reject(err);
-            }
-        });
         client.initialize();
 
         res.status(200).json("whatsapp db connected");
@@ -52,7 +35,25 @@ const getQrCodeHelper = async (req, res) => {
         const state = await client.getState();
         console.log(state, "state");
         if (state !== "CONNECTED") {
-            // return new Promise((resolve, reject) => {});
+            new Promise((resolve, reject) => {
+                client.on("qr", (qr) => {
+                    try {
+                        qrcode.toDataURL(qr, (err, url) => {
+                            if (err) {
+                                console.error("Error generating QR code:", err);
+                                // reject(err);
+                            } else {
+                                urlString = url;
+                                console.log(url);
+                                resolve(url);
+                            }
+                        });
+                    } catch (err) {
+                        throw err;
+                        reject(err);
+                    }
+                });
+            });
 
             res.status(200).json(urlString);
         } else {
