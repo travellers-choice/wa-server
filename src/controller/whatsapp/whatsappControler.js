@@ -10,9 +10,9 @@ let client = new Client({
         store: store,
         backupSyncIntervalMs: 300000,
     }),
-    authStrategy: new LocalAuth({
-        dataPath: "whatsappDb",
-    }),
+    // authStrategy: new LocalAuth({
+    //     dataPath: "whatsappDb",
+    // }),
     puppeteer: {
         args: ["--no-sandbox"],
     },
