@@ -146,6 +146,7 @@ const stateHelper = async (req, res) => {
 
 const sendMessageHelper = async (req, res) => {
     try {
+        console.log("call reached messsage check");
         const { type, url, path, message, number } = req.body;
 
         // const state = await client?.getState();
