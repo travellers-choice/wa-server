@@ -5,7 +5,6 @@ const bodyParser = require("body-parser");
 
 const app = express();
 
-
 // Parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -22,7 +21,12 @@ app.get("/", (req, res) => {
 
 connectWhatsApp();
 
-app.use("/whatsapp", whatsappRouter);
+function randomDelay(req, res, next) {
+    const delay = Math.floor(Math.random() * 10) + 1; // Random delay between 1 and 10 seconds
+    setTimeout(next, delay * 1000); 
+}
+
+app.use("/whatsapp", randomDelay, whatsappRouter);
 
 // Start the server
 const PORT = process.env.PORT || 3002;

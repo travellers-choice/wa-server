@@ -3,6 +3,7 @@ const { MongoStore } = require("wwebjs-mongo");
 const mongoose = require("mongoose");
 const { MessageMedia } = require("whatsapp-web.js");
 const qrcode = require("qrcode");
+const sendErrorResponse = require("../../helper/sendErrorResponse");
 const store = new MongoStore({ mongoose: mongoose });
 
 let client = new Client({
@@ -39,6 +40,7 @@ const connectWhatsApp = async () => {
 const getQrCodeHelper = async (req, res) => {
     try {
         const state = await client.getState();
+        asdasd;
         console.log(state, "state");
         if (state !== "CONNECTED") {
             // client.initialize();
@@ -73,7 +75,7 @@ const getQrCodeHelper = async (req, res) => {
             throw new Error("Please logout before changing number"); // Throw a new Error object
         }
     } catch (err) {
-        throw err;
+        sendErrorResponse(res, 500, err);
     }
 };
 
@@ -89,7 +91,7 @@ const getReadyCheckHelper = async (req, res) => {
         }
     } catch (err) {
         console.log("Error in getReadyCheckHelper:", err);
-        return false;
+        sendErrorResponse(res, 500, err);
     }
 };
 
@@ -106,7 +108,7 @@ const logoutHelper = async (req, res) => {
         }
     } catch (err) {
         console.log(err, "err");
-        return err;
+        sendErrorResponse(res, 500, err);
     }
 };
 

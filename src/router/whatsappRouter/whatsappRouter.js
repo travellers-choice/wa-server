@@ -14,7 +14,6 @@ router.get("/qr-code", getQrCodeHelper);
 router.get("/check-connected", getReadyCheckHelper);
 router.get("/logout", logoutHelper);
 router.get("/state-helper", stateHelper);
-
 router.post("/send-message", sendMessageHelper);
 
 module.exports = router;
