@@ -21,12 +21,9 @@ app.get("/", (req, res) => {
 
 connectWhatsApp();
 
-function randomDelay(req, res, next) {
-    const delay = Math.floor(Math.random() * 10) + 1; // Random delay between 1 and 10 seconds
-    setTimeout(next, delay * 1000); 
-}
 
-app.use("/whatsapp", randomDelay, whatsappRouter);
+
+app.use("/whatsapp", whatsappRouter);
 
 // Start the server
 const PORT = process.env.PORT || 3002;
